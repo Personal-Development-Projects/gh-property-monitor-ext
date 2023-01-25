@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/cli/go-gh"
 )
@@ -24,24 +23,24 @@ func main() {
 	fmt.Printf("Running as %s\n", response.Login)
 
 	fmt.Println("Collecting PRs associated with branch")
-	updatedPRBuffer, _, err := gh.Exec("search", "prs", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "--json", "number", "--jq", ".[].number")
+	/*	updatedPRBuffer, _, err := gh.Exec("search", "prs", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "--json", "number", "--jq", ".[].number")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(updatedPRBuffer)
+
+		prListResult := &Results{}
+		err = json.Unmarshal(updatedPRBuffer.Bytes(), prListResult)
+		if err != nil {
+			fmt.Println(err)
+		}*/
+
+	tempTest, _, err := gh.Exec("api", "graphql", "-F", "$org", "Personal-Development-Projects", "-F", "$repo", "OConnor-Development-Project.github.io", "-F", "query", PrListQuery)
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
-	fmt.Println(updatedPRBuffer)
-
-	prListResult := &Results{}
-	err = json.Unmarshal(updatedPRBuffer.Bytes(), prListResult)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	tempTest, _, err := gh.Exec("api", "graphql", "-F", "$org", "Personal-Development-Projects", "-F", "$repo", "OConnor-Development-Project.github.io", "-F", "query", "'\nquery allPullRequests($org: String!, $repo: String!, $endCursor: String) {\n  organization(login: $org) {\n    repository(name: $repo) {\n      pullRequests(first: 100, after: $endCursor, states: OPEN,) {\n        nodes {\n          author {\n            login\n          }\n          number\n          createdAt\n          mergedAt\n          mergedBy {\n            login\n          }\n          approvers: reviews(states: APPROVED, first: 10) {\n            nodes {\n              author {\n                ... on User {\n                  name\n                  login\n                }\n              }\n              state\n            }\n          }\n          title\n          repository {\n            owner {\n              login\n            }\n            name\n          }\n        }\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n      }\n    }\n  }\n}\n'")
-	if err != nil {
-		return
-	}
-	fmt.Println(tempTest.String())
+	fmt.Println(tempTest)
 
 	//err = json.Unmarshal(updatedPR.Bytes(), &prListResult)
 	//if err != nil {
@@ -73,14 +72,6 @@ func main() {
 //func getPRDetails(prNumber int) {
 //	gh.Exec("pr", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "diff", string(prNumber))
 //}
-
-// Will add constants once on work PC
-const (
-	Summer string = "summer"
-	Autumn        = "autumn"
-	Winter        = "winter"
-	Spring        = "spring"
-)
 
 //func (result *PRListResult) UnmarshalJSON(p []byte) error {
 //	var tmp []json.RawMessage
@@ -114,3 +105,8 @@ type Results struct {
 type PullRequest struct {
 	number string
 }
+
+const (
+	PrListQuery string = "'\n query allPullRequests($org: String!, $repo: String!, $endCursor: String) {\n  organization(login: $org) {\n    repository(name: $repo) {\n      pullRequests(first: 100, after: $endCursor, states: OPEN,) {\n nodes {\n author {\n login\n }\n number\n createdAt\n mergedAt\n mergedBy {\n login\n }\n approvers: reviews(states: APPROVED, first: 10) {\n nodes {\n author {\n ... on User {\n name\n login\n }\n }\n state\n }\n }\n title\n repository {\n owner {\n login\n }\n name\n }\n }\n pageInfo {\n hasNextPage\n endCursor\n }\n }\n }\n }\n}\n'"
+	PrNumQuery  string = "summer"
+)

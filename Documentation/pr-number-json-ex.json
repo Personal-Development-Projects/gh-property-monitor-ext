@@ -1,8 +1,54 @@
-[
-  {
-    "number": 2
-  },
-  {
-    "number": 1
+{
+  "data": {
+    "organization": {
+      "repository": {
+        "pullRequests": {
+          "nodes": [
+            {
+              "author": {
+                "login": "patrickfoconnor"
+              },
+              "number": 1,
+              "createdAt": "2023-01-23T21:47:59Z",
+              "mergedAt": null,
+              "mergedBy": null,
+              "approvers": {
+                "nodes": []
+              },
+              "title": "Update README.md",
+              "repository": {
+                "owner": {
+                  "login": "Personal-Development-Projects"
+                },
+                "name": "OConnor-Development-Project.github.io"
+              }
+            },
+            {
+              "author": {
+                "login": "patrickfoconnor"
+              },
+              "number": 2,
+              "createdAt": "2023-01-23T22:38:23Z",
+              "mergedAt": null,
+              "mergedBy": null,
+              "approvers": {
+                "nodes": []
+              },
+              "title": "Update README.md",
+              "repository": {
+                "owner": {
+                  "login": "Personal-Development-Projects"
+                },
+                "name": "OConnor-Development-Project.github.io"
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpHOSF80lw=="
+          }
+        }
+      }
+    }
   }
-]
+}
