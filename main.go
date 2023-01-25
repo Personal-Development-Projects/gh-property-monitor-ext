@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/cli/go-gh"
 )
 
+// This is a test comment
 func main() {
 
 	// Using github rest api to get username that is logged in at enterprise server
