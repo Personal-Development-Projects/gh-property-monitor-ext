@@ -36,11 +36,11 @@ func main() {
 			fmt.Println(err)
 		}*/
 
-	tempTest, _, err := gh.Exec("api", "graphql", "-F", "$org", "Personal-Development-Projects", "-F", "$repo", "OConnor-Development-Project.github.io", "-F", "query", PrListQuery)
+	tempTest, _, err := gh.Exec("api", "graphql", "-F", "$org", "Personal-Development-Projects", "-F", "$repo", "OConnor-Development-Project.github.io", "-F", "query", "query allPullRequests($org: String!, $repo: String!, $endCursor: String) { \n  organization(login: $org) { \n    repository(name: $repo) { \n      pullRequests(first: 100, after: $endCursor, states: OPEN,) { \n nodes { \n author { \n login \n } \n number \n createdAt \n mergedAt \n mergedBy { \n login \n } \n approvers: reviews(states: APPROVED, first: 10) { \n nodes { \n author { \n ... on User { \n name \n login \n } \n } \n state \n } \n } \n title \n repository { \n owner { \n login \n } \n name \n } \n } \n pageInfo { \n hasNextPage \n endCursor \n } \n } \n } \n } \n} ")
 	if err != nil {
 		return
 	}
-	fmt.Println(tempTest)
+	fmt.Println(tempTest.String())
 
 	//err = json.Unmarshal(updatedPR.Bytes(), &prListResult)
 	//if err != nil {
@@ -106,7 +106,7 @@ type PullRequest struct {
 	number string
 }
 
-const (
-	PrListQuery string = "'\n query allPullRequests($org: String!, $repo: String!, $endCursor: String) {\n  organization(login: $org) {\n    repository(name: $repo) {\n      pullRequests(first: 100, after: $endCursor, states: OPEN,) {\n nodes {\n author {\n login\n }\n number\n createdAt\n mergedAt\n mergedBy {\n login\n }\n approvers: reviews(states: APPROVED, first: 10) {\n nodes {\n author {\n ... on User {\n name\n login\n }\n }\n state\n }\n }\n title\n repository {\n owner {\n login\n }\n name\n }\n }\n pageInfo {\n hasNextPage\n endCursor\n }\n }\n }\n }\n}\n'"
-	PrNumQuery  string = "summer"
-)
+//const (
+//	PrListQuery string = "' \n query allPullRequests($org: String!, $repo: String!, $endCursor: String) { \n  organization(login: $org) { \n    repository(name: $repo) { \n      pullRequests(first: 100, after: $endCursor, states: OPEN,) { \n nodes { \n author { \n login \n } \n number \n createdAt \n mergedAt \n mergedBy { \n login \n } \n approvers: reviews(states: APPROVED, first: 10) { \n nodes { \n author { \n ... on User { \n name \n login \n } \n } \n state \n } \n } \n title \n repository { \n owner { \n login \n } \n name \n } \n } \n pageInfo { \n hasNextPage \n endCursor \n } \n } \n } \n } \n} \n '"
+//	PrNumQuery  string = "summer"
+//)
