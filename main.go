@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/cli/go-gh"
-	"log"
 )
 
 func main() {
@@ -25,29 +23,37 @@ func main() {
 	fmt.Printf("Running as %s\n", response.Login)
 
 	fmt.Println("Collecting PRs associated with branch")
-	updatedPRBuffer, _, err := gh.Exec("search", "prs", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "--json", "number", "--jq", ".[].number")
+	//TODO Would like to have jq return more formatted return in order to reduce parsing
+	updatedPRBuffer, _, err := gh.Exec("search", "prs", "--merged-at", "", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "--json", "number,repository,author")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println("Starting to collect the file changes from PR's")
-	scanner := bufio.NewScanner(&updatedPRBuffer)
-	for scanner.Scan() {
-		getPRDetails(scanner.Text())
-		//fmt.Printf("metric: %s", scanner.Text())
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	updatedPRString := updatedPRBuffer.String()
+	fmt.Println(updatedPRString)
 
 }
 
-func getPRDetails(prNumber string) {
-	prDetails, _, err := gh.Exec("pr", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "diff", prNumber)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Print(prDetails.String())
-	//fmt.Println(_prDetails)
+//func getPRDetails(prNumber string) {
+//	prDetails, _, err := gh.Exec("pr", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "diff", prNumber)
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//	fmt.Print(prDetails.String())
+//	//fmt.Println(_prDetails)
+//}
+
+type name struct {
+}
+
+type PullRequest struct {
+	Number     string
+	Repository string
+	Author     string
+	//Approver string
+	FileNameAdditions []string
+	FileNameDeletions []string
+	textAdditions     []string
+	textDeletions     []string
 }
