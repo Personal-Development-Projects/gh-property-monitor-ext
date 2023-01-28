@@ -11,7 +11,8 @@ func main() {
 
 	// Using github rest api to get username that is logged in at enterprise server
 	client, err := gh.RESTClient(nil)
-	if funcName(err) {
+	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	response := struct{ Login string }{}
