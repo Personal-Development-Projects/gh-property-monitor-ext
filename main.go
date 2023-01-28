@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/cli/go-gh"
+	"strconv"
 )
 
 func main() {
@@ -29,31 +31,58 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("Starting to collect the file changes from PR's")
-	updatedPRString := updatedPRBuffer.String()
-	fmt.Println(updatedPRString)
+	var prBaseResults PullRequestsResults
+	err = json.Unmarshal(updatedPRBuffer.Bytes(), &prBaseResults)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Function to populate these four arrays of struct
+	// 		FileNameAdditions []string
+	//		FileNameDeletions []string
+	//		textAdditions     []string
+	//		textDeletions     []string
+	populateDetailedResults(prBaseResults)
 
+	for i := 0; i < len(prBaseResults); i++ {
+	}
+	//TODO Incorporate unmarshalled object into PR details function
+	//fmt.Println("Starting to collect the file changes from PR's")
 }
 
-//func getPRDetails(prNumber string) {
-//	prDetails, _, err := gh.Exec("pr", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "diff", prNumber)
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//	fmt.Print(prDetails.String())
-//	//fmt.Println(_prDetails)
-//}
+func populateDetailedResults(prList PullRequestsResults) {
+	// Iterate through the list of PRs
+	for prIndex := 0; prIndex < len(prList); prIndex++ {
+		prNumString := strconv.Itoa(prList[prIndex].Number)
+		prDetails, _, err := gh.Exec("pr", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "diff", prNumString)
+		if err != nil {
+			fmt.Println(err)
+		}
+		// parse those into struct that can be merged into prList
+		parseDetailedArrays(prList[prIndex], prDetails.String())
+	}
+}
 
-type name struct {
+func parseDetailedArrays(pr struct{ PullRequest }, prDetailsRaw string) {
+	fmt.Println(pr)
+}
+
+type PullRequestsResults []struct {
+	PullRequest
 }
 
 type PullRequest struct {
-	Number     string
-	Repository string
-	Author     string
-	//Approver string
-	FileNameAdditions []string
-	FileNameDeletions []string
-	textAdditions     []string
-	textDeletions     []string
+	Author struct {
+		Login string `json:"login"`
+	} `json:"author"`
+	Number     int `json:"number"`
+	Repository struct {
+		Name string `json:"name"`
+		//NameWithOwner string `json:"nameWithOwner"`
+	} `json:"repository"`
+	DetailedResults struct {
+		FileNameAdditions []string
+		FileNameDeletions []string
+		textAdditions     []string
+		textDeletions     []string
+	}
 }
