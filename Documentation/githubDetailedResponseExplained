@@ -1,0 +1,47 @@
+#================================
+#  The first three char response
+#================================
+first char:  dif ==> states should check that this says diff in first 4 chars
+first char:  ind ==> up until first space is the base branch
+first char:  --- ==> denotes a file that experienced deletion
+first char:  +++ ==> denotes a file that experienced addition
+first char:  @@  ==> github file changes addition subtraction notes
+first char:   #  ==> Repo
+first char:   A ==> REpo Description
+first char:  + ==>
+first char:  +tes ==> line change
+New Response Started
+
+first char:  dif ==> denotes a new diff is happening
+first char:   ==>
+first char:  - ==>
+first char:  + ==>
+first char:  @ ==>
+first char:    ==>
+first char:    ==>
+first char:  + ==>
+first char:  + ==>
+
+#================================
+#  The full response
+#================================
+line:  diff --git a/README.md b/README.md
+line:  index 0ae5b5c..075645f 100644
+line:  --- a/README.md
+line:  +++ b/README.md
+line:  @@ -1,2 +1,4 @@
+line:   # OConnor-Development-Project.github.io
+line:   A front page for my personal GitHub organization that holds an assortment of public code applications
+line:  +
+line:  +testing out PR function
+
+New Response Started
+line:  diff --git a/README.md b/README.md
+line:  index 0ae5b5c..075645f 100644
+line:  --- a/README.md
+line:  +++ b/README.md
+line:  @@ -1,2 +1,4 @@
+line:   # OConnor-Development-Project.github.io
+line:   A front page for my personal GitHub organization that holds an assortment of public code applications
+line:  +
+line:  +testing out PR function

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"github.com/cli/go-gh"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -24,6 +26,7 @@ func main() {
 	fmt.Println("Starting gh-property-monitor extension")
 	fmt.Printf("Running as %s\n", response.Login)
 
+	//TODO Possibly add user option to login or verify that this username is correct
 	fmt.Println("Collecting PRs associated with branch")
 	//TODO Would like to have jq return more formatted return in order to reduce parsing
 	updatedPRBuffer, _, err := gh.Exec("search", "prs", "--merged-at", "", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "--json", "number,repository,author")
@@ -41,15 +44,12 @@ func main() {
 	//		FileNameDeletions []string
 	//		textAdditions     []string
 	//		textDeletions     []string
-	populateDetailedResults(prBaseResults)
-
-	for i := 0; i < len(prBaseResults); i++ {
-	}
-	//TODO Incorporate unmarshalled object into PR details function
-	//fmt.Println("Starting to collect the file changes from PR's")
+	var finalResult = populateDetailedResults(prBaseResults)
+	fmt.Println(finalResult)
 }
 
-func populateDetailedResults(prList PullRequestsResults) {
+// TODO This could be improved by increasing the proficiency of the parser
+func populateDetailedResults(prList PullRequestsResults) PullRequestsResults {
 	// Iterate through the list of PRs
 	for prIndex := 0; prIndex < len(prList); prIndex++ {
 		prNumString := strconv.Itoa(prList[prIndex].Number)
@@ -58,12 +58,17 @@ func populateDetailedResults(prList PullRequestsResults) {
 			fmt.Println(err)
 		}
 		// parse those into struct that can be merged into prList
-		parseDetailedArrays(prList[prIndex], prDetails.String())
+		scanner := bufio.NewScanner(&prDetails)
+		for scanner.Scan() {
+			if strings.Contains(scanner.Text(), "+") {
+				prList[prIndex].DetailedResults.Additions = append(prList[prIndex].DetailedResults.Additions, scanner.Text())
+			}
+			if strings.Contains(scanner.Text(), "-") {
+				prList[prIndex].DetailedResults.Deletions = append(prList[prIndex].DetailedResults.Deletions, scanner.Text())
+			}
+		}
 	}
-}
-
-func parseDetailedArrays(pr struct{ PullRequest }, prDetailsRaw string) {
-	fmt.Println(pr)
+	return prList
 }
 
 type PullRequestsResults []struct {
@@ -80,9 +85,7 @@ type PullRequest struct {
 		//NameWithOwner string `json:"nameWithOwner"`
 	} `json:"repository"`
 	DetailedResults struct {
-		FileNameAdditions []string
-		FileNameDeletions []string
-		textAdditions     []string
-		textDeletions     []string
+		Additions []string `json:"_"`
+		Deletions []string `json:"_"`
 	}
 }
