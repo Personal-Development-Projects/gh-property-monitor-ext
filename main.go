@@ -59,12 +59,16 @@ func marshalResultsToCSVExcel(results PullRequestsResults) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	var csvReadyResults PullRequestsResults
+	var csvReadyResults CSVReadyResults
 	err = json.Unmarshal(rawJson, &csvReadyResults)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(csvReadyResults)
+	//fmt.Println(csvReadyResults)
+	for i := 0; i < len(csvReadyResults); i++ {
+		fmt.Println("PR Number: ", csvReadyResults[i].Number, " Author: ", csvReadyResults[i].Author.Login, " Files Affected (additions): ", csvReadyResults[i].FileAdditions, " Text Additions: ", csvReadyResults[i].TxtAdditions, " Files Affected (deletions): ", csvReadyResults[i].FileDeletions, " Text Deletions: ", csvReadyResults[i].TxtDeletions)
+
+	}
 }
 
 // TODO This could be improved by increasing the proficiency of the parser
@@ -134,13 +138,15 @@ type PullRequest struct {
 	TxtDeletions  string `json:"txt-deletions"`
 }
 
-type CSVReadyResults struct {
-	Number        int    `json:"number"`
-	Login         string `json:"login"`
-	FileAdditions string `json:"file_additions"`
-	TxtAdditions  string `json:"txt_additions"`
-	FileDeletions string `json:"file_deletions"`
-	TxtDeletions  string `json:"txt_deletions"`
+type CSVReadyResults []struct {
+	Number int `json:"number"`
+	Author struct {
+		Login string `json:"login"`
+	} `json:"author"`
+	FileAdditions string `json:"file-additions"`
+	TxtAdditions  string `json:"txt-additions"`
+	FileDeletions string `json:"file-deletions"`
+	TxtDeletions  string `json:"txt-deletions"`
 }
 
 //func (resultDetails DetailedResults) String() string {
