@@ -141,12 +141,12 @@ type PullRequest struct {
 }
 
 type CSVReadyResults struct {
-	Number        int
-	Login         string
-	FileAdditions string
-	TxtAdditions  string
-	FileDeletions string
-	TxtDeletions  string
+	Number        int    `json:"number"`
+	Login         string `json:"login"`
+	FileAdditions string `json:"file_additions"`
+	TxtAdditions  string `json:"txt_additions"`
+	FileDeletions string `json:"file_deletions"`
+	TxtDeletions  string `json:"txt_deletions"`
 }
 
 //func (resultDetails DetailedResults) String() string {
