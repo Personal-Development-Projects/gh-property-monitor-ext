@@ -55,12 +55,16 @@ func main() {
 }
 
 func marshalResultsToCSVExcel(results PullRequestsResults) {
-	testJson, err := json.Marshal(results)
+	rawJson, err := json.Marshal(results)
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	fmt.Println(string(testJson))
+	var csvReadyResults PullRequestsResults
+	err = json.Unmarshal(rawJson, &csvReadyResults)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(csvReadyResults)
 }
 
 // TODO This could be improved by increasing the proficiency of the parser
@@ -76,7 +80,7 @@ func populateDetailedResults(prList PullRequestsResults) PullRequestsResults {
 		scanner := bufio.NewScanner(&prDetails)
 		scanner.Split(bufio.ScanLines)
 		for scanner.Scan() {
-			resultString := scanner.Text() + ","
+			resultString := scanner.Text() + ", \n"
 			if strings.HasPrefix(scanner.Text(), "+") {
 				if strings.Count(scanner.Text(), "+") >= 3 {
 					prList[prIndex].FileAdditions += resultString
@@ -109,17 +113,7 @@ func writeResultsToFile(resultList PullRequestsResults) {
 		fmt.Println(err)
 	}
 	defer file.Close()
-
-	//createCSVDataArray(resultList)
-
 }
-
-//func createCSVDataArray(requestsResults PullRequestsResults) {
-//	resultsCSV := [][]string{{}}
-//	for index := 0; index < len(requestsResults); index++ {
-//
-//	}
-//}
 
 type PullRequestsResults []struct {
 	PullRequest
