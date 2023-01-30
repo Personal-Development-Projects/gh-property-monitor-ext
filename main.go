@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cli/go-gh"
 )
@@ -48,10 +49,7 @@ func main() {
 	//		textDeletions     []string
 	var finalResult = populateDetailedResults(prBaseResults)
 	writeResultsToFile(finalResult)
-	fmt.Println(finalResult[0].DetailedResults.FileAdditions)
-	fmt.Println(finalResult[0].DetailedResults.TxtAdditions)
-	fmt.Println(finalResult[0].DetailedResults.FileDeletions)
-	fmt.Println(finalResult[0].DetailedResults.TxtDeletions)
+
 }
 
 // TODO This could be improved by increasing the proficiency of the parser
@@ -90,11 +88,23 @@ func populateDetailedResults(prList PullRequestsResults) PullRequestsResults {
 
 // Need to iterate through results and write to file in correct format
 func writeResultsToFile(resultList PullRequestsResults) {
-	file, err := os.Create("data.txt")
+	fileName := time.Now().Format("2006-01-02")
+	fmt.Println(fileName + ".csv")
+	file, err := os.Create(fileName + ".csv")
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer file.Close()
+
+	createCSVDataArray(resultList)
+
+}
+
+func createCSVDataArray(requestsResults PullRequestsResults) {
+	resultsCSV := [][]string{{}}
+	for index := 0; index < len(requestsResults); index++ {
+
+	}
 }
 
 type PullRequestsResults []struct {
@@ -110,10 +120,23 @@ type PullRequest struct {
 		Name string `json:"name"`
 		//NameWithOwner string `json:"nameWithOwner"`
 	} `json:"repository"`
-	DetailedResults struct {
-		FileAdditions []string `json:"_"`
-		TxtAdditions  []string `json:"_"`
-		FileDeletions []string `json:"_"`
-		TxtDeletions  []string `json:"_"`
+	DetailedResults
+}
+
+type DetailedResults struct {
+	FileAdditions []string `json:"_"`
+	TxtAdditions  []string `json:"_"`
+	FileDeletions []string `json:"_"`
+	TxtDeletions  []string `json:"_"`
+}
+
+func (resultDetails DetailedResults) String() string {
+	for i := 0; i < 4; i++ {
+
 	}
+}
+
+func (pr PullRequest) String() []string {
+	resultString := []string{string(pr.Number), pr.Author.Login, pr.DetailedResults.String()}
+	return resultString
 }
