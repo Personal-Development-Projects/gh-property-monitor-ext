@@ -6,7 +6,7 @@ A gh cli extension for monitoring property files for changes
 
 run the following command once authorized within the GH CLI 
 
-1) run git auth status and ensure you are logged in at the appropiate GitHub host
+1) run ```git auth status and ensure you are logged in at the appropiate GitHub host```
 2) run ```gh ext install Personal-Development-Projects/gh-property-monitor```
 
 ## Creating a new release
