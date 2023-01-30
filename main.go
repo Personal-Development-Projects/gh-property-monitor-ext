@@ -67,16 +67,20 @@ func populateDetailedResults(prList PullRequestsResults) PullRequestsResults {
 		scanner := bufio.NewScanner(&prDetails)
 		scanner.Split(bufio.ScanLines)
 		for scanner.Scan() {
-			if strings.HasPrefix(scanner.Text(), "+") && strings.Count(scanner.Text(), "+") >= 3 {
-				prList[prIndex].DetailedResults.FileAdditions = append(prList[prIndex].DetailedResults.FileAdditions, scanner.Text())
-			} else if strings.HasPrefix(scanner.Text(), "+") && strings.Count(scanner.Text(), "+") < 3 {
-				prList[prIndex].DetailedResults.TxtAdditions = append(prList[prIndex].DetailedResults.TxtAdditions, scanner.Text())
+			if strings.HasPrefix(scanner.Text(), "+") {
+				if strings.Count(scanner.Text(), "+") >= 3 {
+					prList[prIndex].DetailedResults.FileAdditions = append(prList[prIndex].DetailedResults.FileAdditions, scanner.Text())
+				} else {
+					prList[prIndex].DetailedResults.TxtAdditions = append(prList[prIndex].DetailedResults.TxtAdditions, scanner.Text())
+				}
 			}
 
-			if strings.HasPrefix(scanner.Text(), "-") && strings.Count(scanner.Text(), "-") >= 3 {
-				prList[prIndex].DetailedResults.FileDeletions = append(prList[prIndex].DetailedResults.FileDeletions, scanner.Text())
-			} else if strings.HasPrefix(scanner.Text(), "-") && strings.Count(scanner.Text(), "-") < 3 {
-				prList[prIndex].DetailedResults.TxtDeletions = append(prList[prIndex].DetailedResults.TxtDeletions, scanner.Text())
+			if strings.HasPrefix(scanner.Text(), "-") {
+				if strings.Count(scanner.Text(), "-") >= 3 {
+					prList[prIndex].DetailedResults.FileDeletions = append(prList[prIndex].DetailedResults.FileDeletions, scanner.Text())
+				} else {
+					prList[prIndex].DetailedResults.TxtDeletions = append(prList[prIndex].DetailedResults.TxtDeletions, scanner.Text())
+				}
 			}
 
 		}
