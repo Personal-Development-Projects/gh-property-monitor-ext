@@ -71,7 +71,9 @@ func populateDetailedResults(prList PullRequestsResults) PullRequestsResults {
 				prList[prIndex].DetailedResults.FileAdditions = append(prList[prIndex].DetailedResults.FileAdditions, scanner.Text())
 			} else if strings.HasPrefix(scanner.Text(), "+") && strings.Count(scanner.Text(), "+") < 3 {
 				prList[prIndex].DetailedResults.TxtAdditions = append(prList[prIndex].DetailedResults.TxtAdditions, scanner.Text())
-			} else if strings.HasPrefix(scanner.Text(), "-") && strings.Count(scanner.Text(), "-") >= 3 {
+			}
+
+			if strings.HasPrefix(scanner.Text(), "-") && strings.Count(scanner.Text(), "-") >= 3 {
 				prList[prIndex].DetailedResults.FileDeletions = append(prList[prIndex].DetailedResults.FileDeletions, scanner.Text())
 			} else if strings.HasPrefix(scanner.Text(), "-") && strings.Count(scanner.Text(), "-") < 3 {
 				prList[prIndex].DetailedResults.TxtDeletions = append(prList[prIndex].DetailedResults.TxtDeletions, scanner.Text())
