@@ -18,5 +18,6 @@ To trigger this action utilize a tag approach as laid out below
   1) ```git tag v1.X.X```
   2) ```git push origin v1.X.X ``` Push this new tag up to GitHub
   3) ```gh run view``` Ensure you see the gh workflow run 
+  4) Further you can ensure the release was created by running ```gh release view```
 
 ## Building new extension to test locally
