@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cli/go-gh"
 )
@@ -46,12 +47,24 @@ func main() {
 	//		FileNameDeletions []string
 	//		textAdditions     []string
 	//		textDeletions     []string
-	var finalResult = populateDetailedResults(prBaseResults)
-	writeResultsToFile(finalResult)
-	fmt.Println(finalResult[0].DetailedResults.FileAdditions)
-	fmt.Println(finalResult[0].DetailedResults.TxtAdditions)
-	fmt.Println(finalResult[0].DetailedResults.FileDeletions)
-	fmt.Println(finalResult[0].DetailedResults.TxtDeletions)
+	finalResult := populateDetailedResults(prBaseResults)
+	marshalResultsToCSVExcel(finalResult)
+
+	//writeResultsToFile(finalResult)
+
+}
+
+func marshalResultsToCSVExcel(results PullRequestsResults) {
+	rawJson, err := json.Marshal(results)
+	if err != nil {
+		fmt.Println(err)
+	}
+	var csvReadyResults PullRequestsResults
+	err = json.Unmarshal(rawJson, &csvReadyResults)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(csvReadyResults)
 }
 
 // TODO This could be improved by increasing the proficiency of the parser
@@ -67,19 +80,22 @@ func populateDetailedResults(prList PullRequestsResults) PullRequestsResults {
 		scanner := bufio.NewScanner(&prDetails)
 		scanner.Split(bufio.ScanLines)
 		for scanner.Scan() {
+			resultString := scanner.Text() + ", \n"
 			if strings.HasPrefix(scanner.Text(), "+") {
 				if strings.Count(scanner.Text(), "+") >= 3 {
-					prList[prIndex].DetailedResults.FileAdditions = append(prList[prIndex].DetailedResults.FileAdditions, scanner.Text())
+					prList[prIndex].FileAdditions += resultString
+					//prList[prIndex].DetailedResults.FileAdditions = append(prList[prIndex].DetailedResults.FileAdditions, scanner.Text())
 				} else {
-					prList[prIndex].DetailedResults.TxtAdditions = append(prList[prIndex].DetailedResults.TxtAdditions, scanner.Text())
+					prList[prIndex].TxtAdditions += resultString
+					//prList[prIndex].DetailedResults.TxtAdditions = append(prList[prIndex].DetailedResults.TxtAdditions, scanner.Text())
 				}
-			}
-
-			if strings.HasPrefix(scanner.Text(), "-") {
+			} else if strings.HasPrefix(scanner.Text(), "-") {
 				if strings.Count(scanner.Text(), "-") >= 3 {
-					prList[prIndex].DetailedResults.FileDeletions = append(prList[prIndex].DetailedResults.FileDeletions, scanner.Text())
+					prList[prIndex].FileDeletions += resultString
+					//prList[prIndex].DetailedResults.FileDeletions = append(prList[prIndex].DetailedResults.FileDeletions, scanner.Text())
 				} else {
-					prList[prIndex].DetailedResults.TxtDeletions = append(prList[prIndex].DetailedResults.TxtDeletions, scanner.Text())
+					prList[prIndex].TxtDeletions += resultString
+					//prList[prIndex].DetailedResults.TxtDeletions = append(prList[prIndex].DetailedResults.TxtDeletions, scanner.Text())
 				}
 			}
 
@@ -90,7 +106,9 @@ func populateDetailedResults(prList PullRequestsResults) PullRequestsResults {
 
 // Need to iterate through results and write to file in correct format
 func writeResultsToFile(resultList PullRequestsResults) {
-	file, err := os.Create("data.txt")
+	fileName := time.Now().Format("2006-01-02")
+	//fmt.Println(fileName + ".csv")
+	file, err := os.Create(fileName + ".csv")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -110,10 +128,30 @@ type PullRequest struct {
 		Name string `json:"name"`
 		//NameWithOwner string `json:"nameWithOwner"`
 	} `json:"repository"`
-	DetailedResults struct {
-		FileAdditions []string `json:"_"`
-		TxtAdditions  []string `json:"_"`
-		FileDeletions []string `json:"_"`
-		TxtDeletions  []string `json:"_"`
-	}
+	FileAdditions string `json:"file-additions"`
+	TxtAdditions  string `json:"txt-additions"`
+	FileDeletions string `json:"file-deletions"`
+	TxtDeletions  string `json:"txt-deletions"`
 }
+
+type CSVReadyResults struct {
+	Number        int    `json:"number"`
+	Login         string `json:"login"`
+	FileAdditions string `json:"file_additions"`
+	TxtAdditions  string `json:"txt_additions"`
+	FileDeletions string `json:"file_deletions"`
+	TxtDeletions  string `json:"txt_deletions"`
+}
+
+//func (resultDetails DetailedResults) String() string {
+//	detailsCSVString := ""
+//	//for i := 0; i < 4; i++ {
+//	//	detailsCSVString += resultDetails[i]
+//	//}
+//	return detailsCSVString
+//}
+//
+//func (pr PullRequest) String() []string {
+//	resultString := []string{string(pr.Number), pr.Author.Login, pr.DetailedResults.String()}
+//	return resultString
+//}
