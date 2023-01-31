@@ -27,7 +27,7 @@ To trigger this action utilize a tag approach as laid out below
 
 Once authorized on your desired remote github server install the extension in one of the options detailed
 
-![GH CLI Auth Status](Documentation/images/GHCliAuth.png?raw=true "GH CLI Auth Status")
+![GH CLI Auth Status](Documentation/images/GHCLIAuth.png?raw=true "GH CLI Auth Status")
 
 This can be installed through cloning the repo, accessing the releases, or utilizing the gh extension search function.
 
