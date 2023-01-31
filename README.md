@@ -21,3 +21,10 @@ To trigger this action utilize a tag approach as laid out below
   4) Further you can ensure the release was created by running ```gh release view```
 
 ## Building new extension to test locally
+
+
+## Example Use Case Results
+
+![Terminal Output](Documentation/images/TerminalOutput.png?raw=true "Terminal Output")
+
+![Excel Outputted File](Documentation/images/ExcelOutput.png?raw=true "Excel Outputted File")
