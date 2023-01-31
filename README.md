@@ -25,6 +25,14 @@ To trigger this action utilize a tag approach as laid out below
 
 ## Example Use Case Results
 
+Once authorized on your desired remote github server install the extension in one of the options detailed
+
+![GH CLI Auth Status](Documentation/images/GHCliAuth.png?raw=true "GH CLI Auth Status")
+
+This can be installed through cloning the repo, accessing the releases, or utilizing the gh extension search function.
+
+Once installed run it using the ```gh property-monitor```
+
 ![Terminal Output](Documentation/images/TerminalOutput.png?raw=true "Terminal Output")
 
 ![Excel Outputted File](Documentation/images/ExcelOutput.png?raw=true "Excel Outputted File")
