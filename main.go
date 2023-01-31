@@ -64,45 +64,26 @@ func writeResultsToFile(results PullRequestsResults) {
 	}()
 	// Create a new sheet to work with
 	sheetName := time.Now().Format("2006-01-02")
-	index, err := file.NewSheet(sheetName)
+	currentSheet, err := file.NewSheet(sheetName)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	// Setup Title
+	file.MergeCell(sheetName, "A1", "F1")
+	sheetTitle := "MGMT Config Query - " + sheetName
+	file.SetCellValue(sheetName, "A1", sheetTitle)
 	// Set headers
-	file.SetCellValue(sheetName, "A1", "PR Number")
-	file.SetCellValue(sheetName, "B1", "Author")
-	file.SetCellValue(sheetName, "C1", "Files Changed (Additions)")
-	file.SetCellValue(sheetName, "D1", "Line Additions")
-	file.SetCellValue(sheetName, "E1", "Files Changed (Deletions)")
-	file.SetCellValue(sheetName, "F1", "Line Deletions")
+	file.SetCellValue(sheetName, "A2", "PR Number")
+	file.SetCellValue(sheetName, "B2", "Author")
+	file.SetCellValue(sheetName, "C2", "Files Changed (Additions)")
+	file.SetCellValue(sheetName, "D2", "Line Additions")
+	file.SetCellValue(sheetName, "E2", "Files Changed (Deletions)")
+	file.SetCellValue(sheetName, "F2", "Line Deletions")
 
-	// testing output to excel basic
-	for i := 0; i < len(results); i++ {
-		cellNumber := i + 2
-		// Add PRs
-		var cellCordA = "A" + strconv.Itoa(cellNumber)
-		file.SetCellValue(sheetName, cellCordA, results[i].Number)
-		// Add Author
-		var cellCordB = "B" + strconv.Itoa(cellNumber)
-		file.SetCellValue(sheetName, cellCordB, results[i].Author.Login)
-		// Add file names that are affected in additions
-		var cellCordC = "C" + strconv.Itoa(cellNumber)
-		file.SetCellValue(sheetName, cellCordC, results[i].FileAdditions)
-		// Add text additions
-		var cellCordD = "D" + strconv.Itoa(cellNumber)
-		file.SetCellValue(sheetName, cellCordD, results[i].TxtAdditions)
-		// Add file names that are affected in deletions
-		var cellCordE = "E" + strconv.Itoa(cellNumber)
-		file.SetCellValue(sheetName, cellCordE, results[i].FileDeletions)
-		// Add text deletions
-		var cellCordF = "F" + strconv.Itoa(cellNumber)
-		file.SetCellValue(sheetName, cellCordF, results[i].TxtDeletions)
-	}
+	populateDataInExcel(file, sheetName, results)
 
-	//populateDataInExcel(file, sheetName, results)
-
-	file.SetActiveSheet(index)
+	file.SetActiveSheet(currentSheet)
 
 	if err := file.SaveAs("test1.xlsx"); err != nil {
 		fmt.Println(err)
@@ -112,7 +93,7 @@ func writeResultsToFile(results PullRequestsResults) {
 func populateDataInExcel(file *excelize.File, sheetName string, results PullRequestsResults) {
 	for i := 0; i < len(results); i++ {
 		//fmt.Println("PR Number: ", csvReadyResults[i].Number, " Author: ", csvReadyResults[i].Author.Login, " Files Affected (additions): ", csvReadyResults[i].FileAdditions, " Text Additions: ", csvReadyResults[i].TxtAdditions, " Files Affected (deletions): ", csvReadyResults[i].FileDeletions, " Text Deletions: ", csvReadyResults[i].TxtDeletions)
-		cellNumber := i + 2
+		cellNumber := i + 3
 		putPRNumberInTable(file, sheetName, cellNumber, results[i].Number)
 		putAuthorInTable(file, sheetName, cellNumber, results[i].Author.Login)
 		putFileAdditionsInTable(file, sheetName, cellNumber, results[i].FileAdditions)
@@ -123,51 +104,45 @@ func populateDataInExcel(file *excelize.File, sheetName string, results PullRequ
 }
 
 func putPRNumberInTable(file *excelize.File, sheetName string, cellNumber int, prNum int) {
-	var cellCord = "A" + string(cellNumber)
-	file.SetCellValue(sheetName, cellCord, prNum)
+	var cellCord = "A" + strconv.Itoa(cellNumber)
+	if err := file.SetCellValue(sheetName, cellCord, prNum); err != nil {
+		fmt.Println(err)
+	}
 }
 
 func putAuthorInTable(file *excelize.File, sheetName string, cellNumber int, login string) {
-	var cellCord = "B" + string(cellNumber)
-	file.SetCellValue(sheetName, cellCord, login)
+	var cellCord = "B" + strconv.Itoa(cellNumber)
+	if err := file.SetCellValue(sheetName, cellCord, login); err != nil {
+		fmt.Println(err)
+	}
 }
 
 func putFileAdditionsInTable(file *excelize.File, sheetName string, cellNumber int, fileAdditions string) {
-	var cellCord = "C" + string(cellNumber)
-	file.SetCellValue(sheetName, cellCord, fileAdditions)
+	var cellCord = "C" + strconv.Itoa(cellNumber)
+	if err := file.SetCellValue(sheetName, cellCord, fileAdditions); err != nil {
+		fmt.Println(err)
+	}
 }
 func putTxtAdditionsInTable(file *excelize.File, sheetName string, cellNumber int, txtAdditions string) {
-	var cellCord = "D" + string(cellNumber)
-	file.SetCellValue(sheetName, cellCord, txtAdditions)
+	var cellCord = "D" + strconv.Itoa(cellNumber)
+	if err := file.SetCellValue(sheetName, cellCord, txtAdditions); err != nil {
+		fmt.Println(err)
+	}
 }
 
 func putFileDeletionsInTable(file *excelize.File, sheetName string, cellNumber int, fileDeletions string) {
-	var cellCord = "E" + string(cellNumber)
-	file.SetCellValue(sheetName, cellCord, fileDeletions)
+	var cellCord = "E" + strconv.Itoa(cellNumber)
+	if err := file.SetCellValue(sheetName, cellCord, fileDeletions); err != nil {
+		fmt.Println(err)
+	}
 }
 func putTxtDeletionsInTable(file *excelize.File, sheetName string, cellNumber int, txtDeletions string) {
-	var cellCord = "F" + string(cellNumber)
-	file.SetCellValue(sheetName, cellCord, txtDeletions)
-}
-
-func marshalResultsToCSVExcel(results PullRequestsResults) {
-	rawJson, err := json.Marshal(results)
-	if err != nil {
+	var cellCord = "F" + strconv.Itoa(cellNumber)
+	if err := file.SetCellValue(sheetName, cellCord, txtDeletions); err != nil {
 		fmt.Println(err)
-	}
-	var csvReadyResults PullRequestsResults
-	err = json.Unmarshal(rawJson, &csvReadyResults)
-	if err != nil {
-		fmt.Println(err)
-	}
-	//fmt.Println(csvReadyResults)
-	for i := 0; i < len(csvReadyResults); i++ {
-		fmt.Println("PR Number: ", csvReadyResults[i].Number, " Author: ", csvReadyResults[i].Author.Login, " Files Affected (additions): ", csvReadyResults[i].FileAdditions, " Text Additions: ", csvReadyResults[i].TxtAdditions, " Files Affected (deletions): ", csvReadyResults[i].FileDeletions, " Text Deletions: ", csvReadyResults[i].TxtDeletions)
-
 	}
 }
 
-// TODO This could be improved by increasing the proficiency of the parser
 func populateDetailedResults(prList PullRequestsResults) PullRequestsResults {
 	// Iterate through the list of PRs
 	for prIndex := 0; prIndex < len(prList); prIndex++ {
@@ -218,27 +193,3 @@ type PullRequest struct {
 	FileDeletions string `json:"file-deletions"`
 	TxtDeletions  string `json:"txt-deletions"`
 }
-
-type CSVReadyResults []struct {
-	Number int `json:"number"`
-	Author struct {
-		Login string `json:"login"`
-	} `json:"author"`
-	FileAdditions string `json:"file-additions"`
-	TxtAdditions  string `json:"txt-additions"`
-	FileDeletions string `json:"file-deletions"`
-	TxtDeletions  string `json:"txt-deletions"`
-}
-
-//func (resultDetails DetailedResults) String() string {
-//	detailsCSVString := ""
-//	//for i := 0; i < 4; i++ {
-//	//	detailsCSVString += resultDetails[i]
-//	//}
-//	return detailsCSVString
-//}
-//
-//func (pr PullRequest) String() []string {
-//	resultString := []string{string(pr.Number), pr.Author.Login, pr.DetailedResults.String()}
-//	return resultString
-//}
