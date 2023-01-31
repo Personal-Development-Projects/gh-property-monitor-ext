@@ -1,3 +1,19 @@
+/*
+gh-property-monitor is a gh cli extension that can be utilized to monitor PR's of an associated Repo
+
+It uses the GH CLI tool to access online GitHub repositories and collect Pull Request information for logging in
+order to reduce manual intervention of property file validation.
+
+Usage:
+
+1) Navigate to the directory in which this program resides on your local machine
+2) Ensure you are logged into gh cli by using ```gh auth status```
+3) Once authorized, install extension with ```gh extension install gh-property-monitor``` or ```gh extension install .```
+4) To run the extension use ``` gh property-monitor```
+
+The output from running this program will be within an Excel file named Property-Monitor and the results for extension run
+can be found under today's local date
+*/
 package main
 
 import (
@@ -30,8 +46,7 @@ func main() {
 
 	//TODO Possibly add user option to login or verify that this username is correct
 	fmt.Println("Collecting PRs associated with branch")
-	//TODO Would like to have jq return more formatted return in order to reduce parsing
-	updatedPRBuffer, _, err := gh.Exec("search", "prs", "--merged-at", "", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "--json", "number,repository,author")
+	updatedPRBuffer, _, err := gh.Exec("search", "prs", "--merged-at", "", "--repo", "Personal-Development-Projects/OConnor-Development-Project.github.io", "--json", "number,author")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -47,10 +62,9 @@ func main() {
 	//		textAdditions     []string
 	//		textDeletions     []string
 	finalResult := populateDetailedResults(prBaseResults)
-	//marshalResultsToCSVExcel(finalResult)
 
+	// Output the results to Excel file
 	writeResultsToFile(finalResult)
-
 }
 
 func writeResultsToFile(results PullRequestsResults) {
