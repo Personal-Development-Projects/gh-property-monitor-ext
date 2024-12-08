@@ -20,11 +20,13 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+
 	"github.com/cli/go-gh"
 	"strconv"
 	"strings"
 )
 
+// This is a test comment
 func main() {
 
 	// Using GitHub rest api to get username that is logged in at remote server
